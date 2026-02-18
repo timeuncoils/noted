@@ -1,9 +1,9 @@
 # Noted
 
-## 2026-02-18T20:25:03.158Z
-id: 1771446303158
+## 2026-02-18T20:25:13.498Z
+id: 1771446313498
 
-what you think about life?
+is life something to  worry about?
 
 ---
 
