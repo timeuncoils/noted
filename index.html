@@ -2,132 +2,126 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
 <style>
 :root{
-  --bg:#000;
-  --surface:#1c1c1e;
-  --border:#2c2c2e;
-  --text:#f2f2f7;
-  --muted:#8e8e93;
-  --accent:#0a84ff;
+  --bg:#0d0d0f;
+  --text:#e8e8ea;
+  --muted:#6e6e73;
+  --line:#1f1f22;
+  --accent:#ff453a;
 }
 
-*{box-sizing:border-box;}
+*{box-sizing:border-box}
 
 body{
   margin:0;
   background:var(--bg);
   color:var(--text);
-  font-family:-apple-system,BlinkMacSystemFont,system-ui;
+  font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
   -webkit-font-smoothing:antialiased;
 }
 
-.app{
-  max-width:720px;
+.wrapper{
+  max-width:680px;
   margin:0 auto;
   padding:
-    calc(env(safe-area-inset-top) + 16px)
-    16px
-    calc(env(safe-area-inset-bottom) + 90px)
-    16px;
+    calc(env(safe-area-inset-top) + 60px)
+    24px
+    calc(env(safe-area-inset-bottom) + 40px);
 }
 
-h1{
-  font-size:22px;
-  font-weight:600;
-  margin:0 0 16px 0;
+.header{
+  font-size:14px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin-bottom:60px;
 }
 
 .note{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:14px;
-  margin-bottom:12px;
-  line-height:1.5;
-  word-wrap:break-word;
+  padding:22px 0;
+  border-bottom:1px solid var(--line);
 }
 
-.note small{
-  display:block;
+.note:last-child{
+  border-bottom:none;
+}
+
+.note-text{
+  font-size:20px;
+  line-height:1.5;
+  font-weight:400;
+}
+
+.note-date{
   margin-top:8px;
   font-size:12px;
   color:var(--muted);
+  letter-spacing:0.05em;
 }
 
 /* Composer */
-.composer{
-  position:fixed;
-  left:0;
-  right:0;
-  bottom:0;
-  padding:
-    10px 12px
-    calc(env(safe-area-inset-bottom) + 12px)
-    12px;
-  background:rgba(0,0,0,0.85);
-  backdrop-filter:blur(20px);
-  border-top:1px solid var(--border);
-}
 
-.composer-inner{
-  max-width:720px;
-  margin:0 auto;
-  display:flex;
-  gap:10px;
-  align-items:flex-end;
+.composer{
+  margin-top:60px;
+  border-top:1px solid var(--line);
+  padding-top:30px;
 }
 
 textarea{
-  flex:1;
-  resize:none;
-  min-height:42px;
-  max-height:160px;
-  padding:12px 14px;
-  border-radius:20px;
-  border:1px solid var(--border);
-  background:var(--surface);
-  color:var(--text);
-  font-size:16px; /* prevents iOS zoom */
-  outline:none;
-}
-
-button{
-  padding:12px 18px;
-  border-radius:20px;
+  width:100%;
   border:none;
-  background:var(--accent);
-  color:#fff;
-  font-weight:600;
-  font-size:15px;
+  background:transparent;
+  resize:none;
+  font-size:22px;
+  font-weight:400;
+  line-height:1.4;
+  outline:none;
+  padding:0;
+  color:var(--text);
 }
 
-button:active{
-  opacity:0.8;
+textarea::placeholder{
+  color:var(--muted);
+}
+
+.save{
+  margin-top:16px;
+  font-size:14px;
+  text-transform:uppercase;
+  letter-spacing:0.1em;
+  color:var(--accent);
+  background:none;
+  border:none;
+  padding:0;
+}
+
+.save:active{
+  opacity:0.6;
 }
 
 .empty{
-  text-align:center;
   color:var(--muted);
-  margin-top:40px;
+  font-size:18px;
+  padding:40px 0;
 }
 </style>
 </head>
 <body>
 
-<div class="app">
-  <h1>Noted</h1>
-  <div id="notes"></div>
-</div>
+<div class="wrapper">
 
-<div class="composer">
-  <div class="composer-inner">
-    <textarea id="input" placeholder="Write something..."></textarea>
-    <button onclick="saveNote()">Save</button>
+  <div class="header">Menu</div>
+
+  <div id="notes"></div>
+
+  <div class="composer">
+    <textarea id="input" rows="1" placeholder="Write something..."></textarea>
+    <button class="save" onclick="saveNote()">Save</button>
   </div>
+
 </div>
 
 <script>
@@ -137,9 +131,9 @@ const DIR   = "notes";
 
 let TOKEN = localStorage.getItem("noted_token") || "";
 
-if (!TOKEN) {
-  TOKEN = prompt("Enter GitHub Personal Access Token:");
-  if (TOKEN) localStorage.setItem("noted_token", TOKEN);
+if(!TOKEN){
+  TOKEN = prompt("GitHub Token:");
+  if(TOKEN) localStorage.setItem("noted_token", TOKEN);
 }
 
 const headers = () => ({
@@ -147,16 +141,15 @@ const headers = () => ({
   "Accept": "application/vnd.github.v3+json"
 });
 
-function encode(content){
-  return btoa(unescape(encodeURIComponent(content)));
-}
+const encode = s =>
+  btoa(unescape(encodeURIComponent(s)));
 
 async function saveNote(){
   const input = document.getElementById("input");
   const text = input.value.trim();
-  if (!text) return;
+  if(!text) return;
 
-  input.value = "";
+  input.value="";
   autoGrow(input);
 
   const id = Date.now();
@@ -164,33 +157,25 @@ async function saveNote(){
   const created = new Date().toISOString();
 
   const content =
-`# Note
-
-created: ${created}
+`created: ${created}
 id: ${id}
 
 ${text}
 `;
 
-  const url =
-    `https://api.github.com/repos/${OWNER}/${REPO}/contents/${filename}`;
-
-  try{
-    const res = await fetch(url,{
+  await fetch(
+    `https://api.github.com/repos/${OWNER}/${REPO}/contents/${filename}`,
+    {
       method:"PUT",
       headers:{...headers(),"Content-Type":"application/json"},
       body:JSON.stringify({
         message:`Add note ${id}`,
         content:encode(content)
       })
-    });
+    }
+  );
 
-    if(!res.ok) throw new Error();
-    loadNotes();
-
-  }catch{
-    alert("Save failed.");
-  }
+  loadNotes();
 }
 
 async function loadNotes(){
@@ -200,37 +185,38 @@ async function loadNotes(){
       { headers: headers() }
     );
 
-    if(res.status === 404){
+    if(res.status===404){
       document.getElementById("notes").innerHTML =
         "<div class='empty'>No notes yet</div>";
       return;
     }
 
     const files = await res.json();
-    const mdFiles = files.filter(f => f.name.endsWith(".md"));
+    const mdFiles = files.filter(f=>f.name.endsWith(".md"));
 
     const loaded = await Promise.all(
       mdFiles.map(async f=>{
         const r = await fetch(f.download_url);
         const text = await r.text();
-        const id = parseInt(text.match(/id:\s*(\d+)/)?.[1] || 0);
-        const created = text.match(/created:\s*(.+)/)?.[1] || "";
-        const body = text.split("\n\n").slice(2).join("\n").trim();
-        return { id, created, text: body };
+        const id = parseInt(text.match(/id:\s*(\d+)/)?.[1]||0);
+        const created = text.match(/created:\s*(.+)/)?.[1]||"";
+        const body = text.split("\n\n").slice(1).join("\n").trim();
+        return {id,created,text:body};
       })
     );
 
-    loaded.sort((a,b)=>b.id - a.id);
+    loaded.sort((a,b)=>b.id-a.id);
     render(loaded);
 
   }catch{
-    alert("Load failed.");
+    document.getElementById("notes").innerHTML =
+      "<div class='empty'>Load failed</div>";
   }
 }
 
 function render(notes){
   const container = document.getElementById("notes");
-  container.innerHTML = "";
+  container.innerHTML="";
 
   if(!notes.length){
     container.innerHTML =
@@ -239,11 +225,11 @@ function render(notes){
   }
 
   notes.forEach(n=>{
-    const div = document.createElement("div");
-    div.className = "note";
-    div.innerHTML = `
-      ${escapeHtml(n.text)}
-      <small>${new Date(n.created).toLocaleString()}</small>
+    const div=document.createElement("div");
+    div.className="note";
+    div.innerHTML=`
+      <div class="note-text">${escapeHtml(n.text)}</div>
+      <div class="note-date">${new Date(n.created).toLocaleString()}</div>
     `;
     container.appendChild(div);
   });
@@ -256,13 +242,12 @@ function escapeHtml(str){
     .replace(/>/g,"&gt;");
 }
 
-/* Auto-grow textarea */
-const textarea = document.getElementById("input");
+const textarea=document.getElementById("input");
 textarea.addEventListener("input",()=>autoGrow(textarea));
 
 function autoGrow(el){
   el.style.height="auto";
-  el.style.height=(el.scrollHeight)+"px";
+  el.style.height=el.scrollHeight+"px";
 }
 
 loadNotes();
