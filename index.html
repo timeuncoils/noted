@@ -1,377 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Noted</title>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --bg: #0a0a0a; --surface: #111; --surface2: #181818;
-    --border: #222; --border2: #2e2e2e;
-    --accent: #e8d5a3; --accent-dim: #7a6e55;
-    --text: #d4cfc7; --muted: #4a4845;
-    --del: #3d1f1f; --del-text: #c07070; --done-text: #7ecf99;
-  }
-  html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Geist Mono', monospace; font-size: 14px; line-height: 1.6; }
-  body {
-    display: flex; flex-direction: column; min-height: 100vh;
-    padding: 48px 24px 80px;
-    background-image: radial-gradient(ellipse 60% 40% at 10% 0%, #1a1710 0%, transparent 70%),
-                      radial-gradient(ellipse 40% 30% at 90% 100%, #0f1218 0%, transparent 70%);
-  }
-  .wrap { max-width: 640px; margin: 0 auto; width: 100%; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--s:#1a1a1a;--s2:#202020;--b:#282828;--b2:#333;--a:#e8d5a3;--ad:#7a6e55;--t:#d4cfc7;--m:#4a4845;--dt:#c07070}
+body{color:var(--t);font-family:'Geist Mono',monospace;font-size:14px;line-height:1.6;min-height:100vh;padding:48px 24px 80px;background:#141414}
+.w{max-width:640px;margin:0 auto}
+.hd{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:40px}
+.logo{font-family:'Instrument Serif',serif;font-size:28px;letter-spacing:-.02em}.logo em{font-style:italic;color:var(--a)}
+.hr{display:flex;align-items:center;gap:14px}
+.nc{font-size:11px;color:var(--m);text-transform:uppercase}
+.ss{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--m)}
+.sd{width:6px;height:6px;border-radius:50%;background:var(--b2);flex-shrink:0}
+.sd.synced{background:#7ecf99}.sd.syncing{background:var(--a);animation:pulse 1s infinite}.sd.error{background:var(--dt)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.ia{margin-bottom:40px}
+.tw{position:relative;margin-bottom:10px}
+textarea{width:100%;min-height:120px;padding:16px;background:var(--s);border:1px solid var(--b);border-radius:6px;color:var(--t);font-family:'Geist Mono',monospace;font-size:13px;line-height:1.7;resize:vertical;outline:none;caret-color:var(--a)}
+textarea::placeholder{color:var(--m)}textarea:focus{border-color:var(--b2);background:var(--s2)}
+.cc{position:absolute;bottom:10px;right:12px;font-size:10px;color:var(--m);pointer-events:none}
+.ac{display:flex;gap:8px;justify-content:flex-end;align-items:center}
+.ht{font-size:10px;color:var(--m);margin-right:auto}
+.btn{padding:9px 20px;background:var(--a);border:none;border-radius:4px;color:#0a0a0a;font-family:'Geist Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .2s,transform .1s}
+.btn:hover{background:#f0e0b0}.btn:active{transform:scale(.97)}.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn-o{padding:6px 12px;background:transparent;border:1px solid var(--b2);border-radius:4px;color:var(--m);font-family:'Geist Mono',monospace;font-size:10px;text-transform:uppercase;cursor:pointer;transition:color .2s,border-color .2s}
+.btn-o:hover{color:var(--a);border-color:var(--ad)}
+.dv{display:flex;align-items:center;gap:12px;margin-bottom:24px}.dl{flex:1;height:1px;background:var(--b)}.dv span{font-size:10px;color:var(--m);text-transform:uppercase}
+.nl{display:flex;flex-direction:column;gap:10px}
+.nc2{background:var(--s);border:1px solid var(--b);border-radius:6px;padding:14px 16px;display:flex;gap:14px;align-items:flex-start;animation:su .3s ease both}
+.nc2:hover{border-color:var(--b2);background:var(--s2)}
+.nb{flex:1}.nt{font-size:13px;line-height:1.65;word-break:break-word;white-space:pre-wrap}
+.nm{display:flex;align-items:center;gap:10px;margin-top:8px}
+.nti{font-size:10px;color:var(--m)}
+.ntg{font-size:9px;text-transform:uppercase;color:var(--ad);background:var(--s);border:1px solid var(--b);border-radius:3px;padding:1px 6px}
+.na{display:flex;gap:6px;flex-shrink:0}
+.bi{width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:none;border:1px solid transparent;border-radius:4px;cursor:pointer;color:var(--m);font-size:13px;font-family:'Geist Mono',monospace}
+.bi:hover{background:var(--b);color:var(--t);border-color:var(--b2)}.bi.d:hover{background:var(--del);color:var(--dt);border-color:#5a2a2a}
+.em{text-align:center;padding:60px 20px;color:var(--m)}.em-i{font-family:'Instrument Serif',serif;font-size:40px;font-style:italic;color:var(--b2);margin-bottom:12px}.em p{font-size:12px;letter-spacing:.08em}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--s2);border:1px solid var(--b2);color:var(--t);padding:10px 20px;border-radius:4px;font-size:11px;opacity:0;transition:transform .25s,opacity .25s;pointer-events:none;z-index:100;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;padding:20px}.mo.show{display:grid;place-items:center}
+.md{background:var(--s2);border:1px solid var(--b2);border-radius:6px;padding:28px;width:min(420px,100%);animation:su .3s ease both}
+.md h3{font-family:'Instrument Serif',serif;font-size:22px;font-style:italic;color:var(--a);margin-bottom:8px}
+.md p{font-size:11px;color:var(--m);line-height:1.7;margin-bottom:20px}.md p a{color:var(--a);text-decoration:none}.md p a:hover{text-decoration:underline}
+.md input{width:100%;padding:12px 14px;background:#141414;border:1px solid var(--b);border-radius:4px;color:var(--t);font-family:'Geist Mono',monospace;font-size:12px;margin-bottom:12px;outline:none;caret-color:var(--a)}
+.md input:focus{border-color:var(--b2)}.md input::placeholder{color:var(--m)}
+.mb{width:100%;padding:12px;background:var(--a);border:none;border-radius:4px;color:#0a0a0a;font-family:'Geist Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .2s}.mb:hover{background:#f0e0b0}
 
-  /* HEADER */
-  .header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 40px; animation: slideDown 0.5s ease both; }
-  .logo { font-family: 'Instrument Serif', serif; font-size: 28px; letter-spacing: -0.02em; }
-  .logo em { font-style: italic; color: var(--accent); }
-  .header-right { display: flex; align-items: center; gap: 14px; }
-  .note-count { font-size: 11px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; }
-  .sync-status { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--muted); letter-spacing: 0.08em; }
-  .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border2); flex-shrink: 0; transition: background 0.3s ease; }
-  .sync-dot.synced { background: var(--done-text); }
-  .sync-dot.syncing { background: var(--accent); animation: pulse 1s infinite; }
-  .sync-dot.error { background: var(--del-text); }
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+@keyframes su{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
-  /* INPUT */
-  .input-area { margin-bottom: 40px; animation: slideDown 0.5s 0.05s ease both; }
-  .textarea-wrap { position: relative; margin-bottom: 10px; }
-  textarea {
-    width: 100%; min-height: 120px; padding: 16px;
-    background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
-    color: var(--text); font-family: 'Geist Mono', monospace; font-size: 13px; line-height: 1.7;
-    resize: vertical; outline: none; caret-color: var(--accent);
-    transition: border-color 0.2s ease, background 0.2s ease;
-  }
-  textarea::placeholder { color: var(--muted); }
-  textarea:focus { border-color: var(--border2); background: var(--surface2); }
-  .char-count { position: absolute; bottom: 10px; right: 12px; font-size: 10px; color: var(--muted); pointer-events: none; }
-  .actions { display: flex; gap: 8px; justify-content: flex-end; align-items: center; }
-  .hint { font-size: 10px; color: var(--muted); letter-spacing: 0.08em; margin-right: auto; }
-  .btn-save {
-    padding: 9px 20px; background: var(--accent); border: none; border-radius: 4px;
-    color: #0a0a0a; font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 500;
-    letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer;
-    transition: background 0.2s ease, transform 0.1s ease;
-  }
-  .btn-save:hover { background: #f0e0b0; }
-  .btn-save:active { transform: scale(0.97); }
-  .btn-save:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-
-  /* DIVIDER */
-  .divider { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; animation: fadeIn 0.5s 0.1s ease both; }
-  .divider-line { flex: 1; height: 1px; background: var(--border); }
-  .divider-label { font-size: 10px; color: var(--muted); letter-spacing: 0.2em; text-transform: uppercase; }
-
-  /* NOTES */
-  .notes-list { display: flex; flex-direction: column; gap: 10px; }
-  .note-card {
-    background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
-    padding: 14px 16px; display: flex; gap: 14px; align-items: flex-start;
-    animation: slideUp 0.3s ease both;
-    transition: border-color 0.2s ease, background 0.2s ease;
-  }
-  .note-card:hover { border-color: var(--border2); background: var(--surface2); }
-  .note-body { flex: 1; min-width: 0; }
-  .note-text { font-size: 13px; line-height: 1.65; word-break: break-word; white-space: pre-wrap; }
-  .note-meta { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
-  .note-time { font-size: 10px; color: var(--muted); letter-spacing: 0.08em; }
-  .note-tag { font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-dim); background: #1c1a14; border: 1px solid #2a2618; border-radius: 3px; padding: 1px 6px; }
-  .note-actions { display: flex; gap: 6px; flex-shrink: 0; }
-  .btn-icon {
-    width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
-    background: none; border: 1px solid transparent; border-radius: 4px;
-    cursor: pointer; color: var(--muted); font-size: 13px; font-family: 'Geist Mono', monospace;
-    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
-  }
-  .btn-icon:hover { background: var(--border); color: var(--text); border-color: var(--border2); }
-  .btn-icon.del:hover { background: var(--del); color: var(--del-text); border-color: #5a2a2a; }
-
-  /* EMPTY */
-  .empty { text-align: center; padding: 60px 20px; color: var(--muted); animation: fadeIn 0.4s ease both; }
-  .empty-icon { font-family: 'Instrument Serif', serif; font-size: 40px; font-style: italic; color: var(--border2); margin-bottom: 12px; }
-  .empty p { font-size: 12px; letter-spacing: 0.08em; }
-
-  /* TOAST */
-  .toast {
-    position: fixed; bottom: 28px; left: 50%;
-    transform: translateX(-50%) translateY(60px);
-    background: var(--surface2); border: 1px solid var(--border2); color: var(--text);
-    padding: 10px 20px; border-radius: 4px; font-size: 11px; letter-spacing: 0.08em;
-    opacity: 0; transition: transform 0.25s ease, opacity 0.25s ease;
-    pointer-events: none; z-index: 100; white-space: nowrap;
-  }
-  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-
-  /* TOKEN MODAL */
-  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 200; align-items: center; justify-content: center; padding: 20px; }
-  .modal-overlay.show { display: flex; }
-  .modal { background: var(--surface2); border: 1px solid var(--border2); border-radius: 6px; padding: 32px; width: 100%; max-width: 420px; animation: slideUp 0.3s ease both; }
-  .modal h3 { font-family: 'Instrument Serif', serif; font-size: 22px; font-style: italic; color: var(--accent); margin-bottom: 8px; }
-  .modal p { font-size: 11px; color: var(--muted); line-height: 1.7; margin-bottom: 20px; }
-  .modal p a { color: var(--accent); text-decoration: none; }
-  .modal p a:hover { text-decoration: underline; }
-  .modal input {
-    width: 100%; padding: 12px 14px; background: var(--bg); border: 1px solid var(--border);
-    border-radius: 4px; color: var(--text); font-family: 'Geist Mono', monospace;
-    font-size: 12px; margin-bottom: 12px; outline: none; caret-color: var(--accent);
-    transition: border-color 0.2s ease;
-  }
-  .modal input:focus { border-color: var(--border2); }
-  .modal input::placeholder { color: var(--muted); }
-  .modal-btn {
-    width: 100%; padding: 12px; background: var(--accent); border: none; border-radius: 4px;
-    color: #0a0a0a; font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 500;
-    letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: background 0.2s ease;
-  }
-  .modal-btn:hover { background: #f0e0b0; }
-  .btn-token { font-size: 10px; padding: 6px 12px; background: transparent; border: 1px solid var(--border2); border-radius: 4px; color: var(--muted); font-family: 'Geist Mono', monospace; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: color 0.2s ease, border-color 0.2s ease; }
-  .btn-token:hover { color: var(--accent); border-color: var(--accent-dim); }
-
-  @keyframes slideDown { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes slideUp   { from { opacity: 0; transform: translateY(10px);  } to { opacity: 1; transform: translateY(0); } }
-  @keyframes fadeIn    { from { opacity: 0; } to { opacity: 1; } }
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
-  @media (max-width: 480px) { body { padding: 28px 16px 60px; } .logo { font-size: 22px; } }
+@media(max-width:480px){body{padding:28px 16px 60px}.logo{font-size:22px}}
 </style>
 </head>
 <body>
-
-<div class="modal-overlay" id="tokenModal">
-  <div class="modal">
-    <h3>connect</h3>
-    <p>Enter your GitHub Personal Access Token to sync notes across devices.<br><br>
-      Create one at <a href="https://github.com/settings/tokens" target="_blank">github.com → Settings → Developer Settings → Personal Access Tokens → Tokens (classic)</a>. Enable <strong>public_repo</strong> scope.
-    </p>
-    <input type="password" id="tokenInput" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
-    <button class="modal-btn" onclick="saveToken()">Connect</button>
-  </div>
+<div class="mo" id="M"><div class="md"><h3>connect</h3><p>Enter your GitHub Personal Access Token to sync notes.<br><br>Create one at <a href="https://github.com/settings/tokens" target="_blank">github.com → Settings → Developer Settings → Personal Access Tokens (classic)</a>. Enable <strong>public_repo</strong>.</p><input type="password" id="TI" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"><button class="mb" onclick="saveTok()">Connect</button></div></div>
+<div class="w">
+  <div class="hd"><div class="logo"><em>noted</em></div><div class="hr"><div class="ss"><span class="sd" id="SD"></span><span id="ST">loading</span></div><div class="nc" id="NC"></div><button class="btn-o" onclick="showM()">Token</button></div></div>
+  <div class="ia"><div class="tw"><textarea id="NI" placeholder="what's on your mind..." maxlength="2000"></textarea><span class="cc" id="CC">0 / 2000</span></div><div class="ac"><span class="ht">⌘ + Enter to save</span><button class="btn" id="SB" onclick="save()" disabled>Save</button></div></div>
+  <div class="dv" id="DV" style="display:none"><div class="dl"></div><span>Notes</span><div class="dl"></div></div>
+  <div class="nl" id="NL"></div>
 </div>
-
-<div class="wrap">
-  <div class="header">
-    <div class="logo"><em>noted</em></div>
-    <div class="header-right">
-      <div class="sync-status"><span class="sync-dot" id="syncDot"></span><span id="syncText">loading</span></div>
-      <div class="note-count" id="noteCount"></div>
-      <button class="btn-token" onclick="showTokenModal()">Token</button>
-    </div>
-  </div>
-
-  <div class="input-area">
-    <div class="textarea-wrap">
-      <textarea id="noteInput" placeholder="what's on your mind..." maxlength="2000"></textarea>
-      <span class="char-count" id="charCount">0 / 2000</span>
-    </div>
-    <div class="actions">
-      <span class="hint">⌘ + Enter to save</span>
-      <button class="btn-save" id="saveBtn" onclick="saveNote()" disabled>Save</button>
-    </div>
-  </div>
-
-  <div class="divider" id="divider" style="display:none;">
-    <div class="divider-line"></div>
-    <div class="divider-label">Notes</div>
-    <div class="divider-line"></div>
-  </div>
-
-  <div class="notes-list" id="notesList"></div>
-</div>
-
-<div class="toast" id="toast"></div>
-
+<div class="toast" id="T"></div>
 <script>
-// ── CONFIG ──
-const OWNER = 'timeuncoils', REPO = 'noted', FILE = 'notes.md';
-let TOKEN = localStorage.getItem('noted_token') || '';
-
-// ── STATE ──
-let notes = [], fileSha = null;
-
-// ── DOM ──
-const $ = id => document.getElementById(id);
-const input = $('noteInput'), charCount = $('charCount'),
-      notesList = $('notesList'), divider = $('divider'),
-      noteCount = $('noteCount'), saveBtn = $('saveBtn'),
-      syncDot = $('syncDot'), syncText = $('syncText');
-
-// ── TOKEN ──
-function saveToken() {
-  const val = $('tokenInput').value.trim();
-  if (!val) return;
-  TOKEN = val;
-  localStorage.setItem('noted_token', val);
-  $('tokenModal').classList.remove('show');
-  showToast('Connected!');
-  loadNotes();
-}
-function showTokenModal() {
-  $('tokenInput').value = '';
-  $('tokenModal').classList.add('show');
-}
-
-// ── SYNC ──
-const setSync = (state, label) => {
-  syncDot.className = `sync-dot ${state}`;
-  syncText.textContent = label;
-};
-
-// ── GITHUB API ──
-const ghHeaders = () => ({ 'Authorization': `token ${TOKEN}`, 'Accept': 'application/vnd.github.v3+json' });
-
-async function ghGet() {
-  const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE}`, { headers: ghHeaders() });
-  if (res.status === 404) return null;
-  if (!res.ok) throw new Error(`GET ${res.status}`);
-  return res.json();
-}
-
-async function ghPut(content) {
-  const latest = await ghGet();
-  if (latest) fileSha = latest.sha;
-  const body = { message: `Update ${FILE}`, content: btoa(unescape(encodeURIComponent(content))) };
-  if (fileSha) body.sha = fileSha;
-  const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE}`, {
-    method: 'PUT', headers: { ...ghHeaders(), 'Content-Type': 'application/json' }, body: JSON.stringify(body)
-  });
-  if (!res.ok) throw new Error(`PUT ${res.status}`);
-  const data = await res.json();
-  fileSha = data.content.sha;
-}
-
-// ── MARKDOWN ──
-const decode = b64 => new TextDecoder().decode(Uint8Array.from(atob(b64.replace(/\n/g, '')), c => c.charCodeAt(0)));
-
-function notesToMd(notes) {
-  return ['# Noted\n', ...notes.flatMap(n => [`## ${n.createdAt}`, `id: ${n.id}\n`, n.text, '\n---\n'])].join('\n');
-}
-
-function mdToNotes(md) {
-  return md.split('\n---\n')
-    .filter(b => b.trim() && !b.startsWith('# '))
-    .reduce((acc, block) => {
-      const lines = block.trim().split('\n');
-      const dateLine = lines.find(l => l.startsWith('## '));
-      const idLine   = lines.find(l => l.startsWith('id: '));
-      if (!dateLine || !idLine) return acc;
-      const text = lines.slice(lines.indexOf(idLine) + 1).join('\n').trim();
-      if (text) acc.push({ id: parseInt(idLine.slice(4)), createdAt: dateLine.slice(3).trim(), text });
-      return acc;
-    }, []);
-}
-
-// ── LOAD ──
-async function loadNotes() {
-  if (!TOKEN) { setSync('error', 'no token'); showTokenModal(); return; }
-  setSync('syncing', 'loading');
-  try {
-    const file = await ghGet();
-    notes = file ? mdToNotes(decode(file.content)) : [];
-    if (file) fileSha = file.sha;
-    render();
-    setSync('synced', 'synced');
-  } catch (e) {
-    setSync('error', 'offline');
-    showToast('Could not load notes');
-  }
-}
-
-// ── SAVE ──
-async function saveNote() {
-  if (!TOKEN) { showTokenModal(); return; }
-  const text = input.value.trim();
-  if (!text) return;
-  input.value = ''; charCount.textContent = '0 / 2000'; saveBtn.disabled = true;
-  setSync('syncing', 'saving');
-  try {
-    const latest = await ghGet();
-    if (latest) { fileSha = latest.sha; notes = mdToNotes(decode(latest.content)); }
-    notes.unshift({ id: Date.now(), text, createdAt: new Date().toISOString() });
-    render();
-    await ghPut(notesToMd(notes));
-    setSync('synced', 'synced');
-    showToast('Saved');
-  } catch (e) {
-    setSync('error', 'sync failed');
-    showToast('Save failed');
-  }
-}
-
-// ── DELETE ──
-async function deleteNote(id) {
-  notes = notes.filter(n => n.id !== id);
-  render();
-  setSync('syncing', 'saving');
-  try {
-    await ghPut(notesToMd(notes));
-    setSync('synced', 'synced');
-    showToast('Deleted');
-  } catch (e) {
-    setSync('error', 'sync failed');
-    showToast('Delete failed');
-  }
-}
-
-// ── COPY ──
-const copyNote = text => navigator.clipboard.writeText(text).then(() => showToast('Copied'));
-
-// ── RENDER ──
-function render() {
-  notesList.innerHTML = '';
-  const count = notes.length;
-  noteCount.textContent = count ? `${count} note${count !== 1 ? 's' : ''}` : '';
-  divider.style.display = count ? 'flex' : 'none';
-  if (!count) {
-    notesList.innerHTML = `<div class="empty"><div class="empty-icon">∅</div><p>no notes yet</p></div>`;
-    return;
-  }
-  notes.forEach((note, i) => {
-    const card = document.createElement('div');
-    card.className = 'note-card';
-    card.style.animationDelay = `${i * 0.03}s`;
-    const d = new Date(note.createdAt);
-    const time = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-               + ' · ' + d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-    const words = note.text.trim().split(/\s+/).length;
-    card.innerHTML = `
-      <div class="note-body">
-        <div class="note-text">${escHtml(note.text)}</div>
-        <div class="note-meta">
-          <span class="note-time">${time}</span>
-          <span class="note-tag">${words}w</span>
-        </div>
-      </div>
-      <div class="note-actions">
-        <button class="btn-icon" title="Copy" onclick="copyNote(${JSON.stringify(note.text)})">⎘</button>
-        <button class="btn-icon del" title="Delete" onclick="deleteNote(${note.id})">×</button>
-      </div>`;
-    notesList.appendChild(card);
-  });
-}
-
-// ── HELPERS ──
-const escHtml = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-
-function showToast(msg) {
-  const t = $('toast');
-  t.textContent = msg; t.classList.add('show');
-  clearTimeout(t._t);
-  t._t = setTimeout(() => t.classList.remove('show'), 2200);
-}
-
-// ── EVENTS ──
-input.addEventListener('input', () => {
-  charCount.textContent = `${input.value.length} / 2000`;
-  saveBtn.disabled = !input.value.trim();
-});
-input.addEventListener('keydown', e => { if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') saveNote(); });
-
-// ── INIT ──
-loadNotes();
+const O='timeuncoils',R='noted',F='notes.md';
+let TOK=localStorage.getItem('noted_token')||'',notes=[],sha=null;
+const $=id=>document.getElementById(id),ni=$('NI'),cc=$('CC'),nl=$('NL'),dv=$('DV'),nc=$('NC'),sb=$('SB'),sd=$('SD'),st=$('ST');
+const sync=(s,l)=>{sd.className=`sd ${s}`;st.textContent=l};
+const hdr=()=>({'Authorization':`token ${TOK}`,'Accept':'application/vnd.github.v3+json'});
+const dec=b=>new TextDecoder().decode(Uint8Array.from(atob(b.replace(/\n/g,'')),c=>c.charCodeAt(0)));
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const toast=m=>{const t=$('T');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2200)};
+const url=`https://api.github.com/repos/${O}/${R}/contents/${F}`;
+async function ghGet(){const r=await fetch(url,{headers:hdr()});if(r.status===404)return null;if(!r.ok)throw Error(r.status);return r.json()}
+async function ghPut(c){const l=await ghGet();if(l)sha=l.sha;const b={message:`Update ${F}`,content:btoa(unescape(encodeURIComponent(c)))};if(sha)b.sha=sha;const r=await fetch(url,{method:'PUT',headers:{...hdr(),'Content-Type':'application/json'},body:JSON.stringify(b)});if(!r.ok)throw Error(r.status);sha=(await r.json()).content.sha}
+const toMd=ns=>['# Noted\n',...ns.flatMap(n=>[`## ${n.c}`,`id: ${n.id}\n`,n.t,'\n---\n'])].join('\n');
+const fromMd=md=>md.split('\n---\n').filter(b=>b.trim()&&!b.startsWith('# ')).reduce((a,b)=>{const ls=b.trim().split('\n'),dl=ls.find(l=>l.startsWith('## ')),il=ls.find(l=>l.startsWith('id: '));if(!dl||!il)return a;const t=ls.slice(ls.indexOf(il)+1).join('\n').trim();if(t)a.push({id:+il.slice(4),c:dl.slice(3).trim(),t});return a},[]);
+function saveTok(){const v=$('TI').value.trim();if(!v)return;TOK=v;localStorage.setItem('noted_token',v);$('M').classList.remove('show');toast('Connected!');load()}
+const showM=()=>{$('TI').value='';$('M').classList.add('show')};
+async function load(){if(!TOK){sync('error','no token');showM();return}sync('syncing','loading');try{const f=await ghGet();notes=f?fromMd(dec(f.content)):[];if(f)sha=f.sha;render();sync('synced','synced')}catch(e){sync('error','offline');toast('Could not load')}}
+async function save(){if(!TOK){showM();return}const t=ni.value.trim();if(!t)return;ni.value='';cc.textContent='0 / 2000';sb.disabled=true;sync('syncing','saving');try{const l=await ghGet();if(l){sha=l.sha;notes=fromMd(dec(l.content))}notes.unshift({id:Date.now(),t,c:new Date().toISOString()});render();await ghPut(toMd(notes));sync('synced','synced');toast('Saved')}catch(e){sync('error','sync failed');toast('Save failed')}}
+async function del(id){notes=notes.filter(n=>n.id!==id);render();sync('syncing','saving');try{await ghPut(toMd(notes));sync('synced','synced');toast('Deleted')}catch(e){sync('error','sync failed');toast('Delete failed')}}
+const copy=t=>navigator.clipboard.writeText(t).then(()=>toast('Copied'));
+function render(){nl.innerHTML='';const n=notes.length;nc.textContent=n?`${n} note${n>1?'s':''}`:'';dv.style.display=n?'flex':'none';if(!n){nl.innerHTML='<div class="em"><div class="em-i">∅</div><p>no notes yet</p></div>';return}notes.forEach((note,i)=>{const el=document.createElement('div');el.className='nc2';el.style.animationDelay=`${i*.03}s`;const d=new Date(note.c),ti=d.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' · '+d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}),w=note.t.trim().split(/\s+/).length;el.innerHTML=`<div class="nb"><div class="nt">${esc(note.t)}</div><div class="nm"><span class="nti">${ti}</span><span class="ntg">${w}w</span></div></div><div class="na"><button class="bi" onclick="copy(${JSON.stringify(note.t)})">⎘</button><button class="bi d" onclick="del(${note.id})">×</button></div>`;nl.appendChild(el)})}
+ni.addEventListener('input',()=>{cc.textContent=`${ni.value.length} / 2000`;sb.disabled=!ni.value.trim()});
+ni.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key==='Enter')save()});
+load();
 </script>
 </body>
 </html>
