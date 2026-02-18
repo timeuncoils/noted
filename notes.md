@@ -1,9 +1,9 @@
 # Noted
 
-## 2026-02-18T20:25:47.360Z
-id: 1771446347360
+## 2026-02-18T20:26:04.843Z
+id: 1771446364843
 
-it doesntseem to replace
+think more.
 
 ---
 
