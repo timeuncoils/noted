@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Noted</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--s:#1a1a1a;--s2:#202020;--b:#282828;--b2:#333;--a:#e8d5a3;--ad:#7a6e55;--t:#d4cfc7;--m:#4a4845;--dt:#c07070}
+body{color:var(--t);font-family:'Geist Mono',monospace;font-size:14px;line-height:1.6;min-height:100vh;padding:48px 24px 80px;background:#141414}
+.w{max-width:640px;margin:0 auto}
+.hd{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:40px}
+.logo{font-family:'Instrument Serif',serif;font-size:28px;letter-spacing:-.02em}.logo em{font-style:italic;color:var(--a)}
+.hr{display:flex;align-items:center;gap:14px}
+.nc{font-size:11px;color:var(--m);text-transform:uppercase}
+.ss{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--m)}
+.sd{width:6px;height:6px;border-radius:50%;background:var(--b2);flex-shrink:0}
+.sd.synced{background:#7ecf99}.sd.syncing{background:var(--a);animation:pulse 1s infinite}.sd.error{background:var(--dt)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.ia{margin-bottom:40px}
+.tw{position:relative;margin-bottom:10px}
+textarea{width:100%;min-height:120px;padding:16px;background:var(--s);border:1px solid var(--b);border-radius:6px;color:var(--t);font-family:'Geist Mono',monospace;font-size:13px;line-height:1.7;resize:vertical;outline:none;caret-color:var(--a)}
+textarea::placeholder{color:var(--m)}textarea:focus{border-color:var(--b2);background:var(--s2)}
+.cc{position:absolute;bottom:10px;right:12px;font-size:10px;color:var(--m);pointer-events:none}
+.ac{display:flex;gap:8px;justify-content:flex-end;align-items:center}
+.ht{font-size:10px;color:var(--m);margin-right:auto}
+.btn{padding:9px 20px;background:var(--a);border:none;border-radius:4px;color:#0a0a0a;font-family:'Geist Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .2s,transform .1s}
+.btn:hover{background:#f0e0b0}.btn:active{transform:scale(.97)}.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn-o{padding:6px 12px;background:transparent;border:1px solid var(--b2);border-radius:4px;color:var(--m);font-family:'Geist Mono',monospace;font-size:10px;text-transform:uppercase;cursor:pointer;transition:color .2s,border-color .2s}
+.btn-o:hover{color:var(--a);border-color:var(--ad)}
+.dv{display:flex;align-items:center;gap:12px;margin-bottom:24px}.dl{flex:1;height:1px;background:var(--b)}.dv span{font-size:10px;color:var(--m);text-transform:uppercase}
+.nl{display:flex;flex-direction:column;gap:10px}
+.nc2{background:var(--s);border:1px solid var(--b);border-radius:6px;padding:14px 16px;display:flex;gap:14px;align-items:flex-start;animation:su .3s ease both}
+.nc2:hover{border-color:var(--b2);background:var(--s2)}
+.nb{flex:1}.nt{font-size:13px;line-height:1.65;word-break:break-word;white-space:pre-wrap}
+.nm{display:flex;align-items:center;gap:10px;margin-top:8px}
+.nti{font-size:10px;color:var(--m)}
+.ntg{font-size:9px;text-transform:uppercase;color:var(--ad);background:var(--s);border:1px solid var(--b);border-radius:3px;padding:1px 6px}
+.na{display:flex;gap:6px;flex-shrink:0}
+.bi{width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:none;border:1px solid transparent;border-radius:4px;cursor:pointer;color:var(--m);font-size:13px;font-family:'Geist Mono',monospace}
+.bi:hover{background:var(--b);color:var(--t);border-color:var(--b2)}.bi.d:hover{background:var(--del);color:var(--dt);border-color:#5a2a2a}
+.em{text-align:center;padding:60px 20px;color:var(--m)}.em-i{font-family:'Instrument Serif',serif;font-size:40px;font-style:italic;color:var(--b2);margin-bottom:12px}.em p{font-size:12px;letter-spacing:.08em}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--s2);border:1px solid var(--b2);color:var(--t);padding:10px 20px;border-radius:4px;font-size:11px;opacity:0;transition:transform .25s,opacity .25s;pointer-events:none;z-index:100;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+@keyframes su{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:480px){body{padding:28px 16px 60px}.logo{font-size:22px}}
+</style>
+</head>
+<body>
+<div class="w">
+  <div class="hd"><div class="logo"><em>noted</em></div><div class="hr"><div class="ss"><span class="sd" id="SD"></span><span id="ST">loading</span></div><div class="nc" id="NC"></div></div></div>
+  <div class="ia"><div class="tw"><textarea id="NI" placeholder="what's on your mind..." maxlength="2000"></textarea><span class="cc" id="CC">0 / 2000</span></div><div class="ac"><span class="ht">⌘ + Enter to save</span><button class="btn" id="SB" onclick="save()" disabled>Save</button></div></div>
+  <div class="dv" id="DV" style="display:none"><div class="dl"></div><span>Notes</span><div class="dl"></div></div>
+  <div class="nl" id="NL"></div>
+</div>
+<div class="toast" id="T"></div>
+<script>
+// ── SUPABASE CONFIG ──
+const SUPABASE_URL  = 'https://rxvfywqtnudmhgagplrl.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ4dmZ5d3F0bnVkbWhnYWdwbHJsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MTg3MjEsImV4cCI6MjA4NzA5NDcyMX0.gCkJvkLSN7qgSX1DQHVaDkY8Y8YZQkjnSixIFJrAgzU';
+
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_ANON);
+
+let notes = [];
+const $ = id => document.getElementById(id);
+const ni = $('NI'), cc = $('CC'), nl = $('NL'), dv = $('DV'), nc = $('NC'), sb = $('SB'), sd = $('SD'), st = $('ST');
+const sync = (s, l) => { sd.className = `sd ${s}`; st.textContent = l; };
+const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const toast = m => { const t = $('T'); t.textContent = m; t.classList.add('show'); clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 2200); };
+
+async function load() {
+  sync('syncing', 'loading');
+  try {
+    const { data, error } = await db
+      .from('notes')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    notes = (data || []).map(row => ({
+      id: row.id,
+      t: row.content,
+      c: row.created_at
+    }));
+
+    render();
+    sync('synced', 'synced');
+  } catch (e) {
+    console.error('Load error:', e);
+    sync('error', 'offline');
+    toast('Could not load');
+  }
+}
+
+async function save() {
+  const t = ni.value.trim();
+  if (!t) return;
+  ni.value = '';
+  cc.textContent = '0 / 2000';
+  sb.disabled = true;
+  sync('syncing', 'saving');
+
+  try {
+    const id = Date.now();
+    const now = new Date().toISOString();
+
+    const { error } = await db
+      .from('notes')
+      .insert({ id, content: t, created_at: now });
+
+    if (error) throw error;
+
+    notes.unshift({ id, t, c: now });
+    render();
+    sync('synced', 'synced');
+    toast('Saved');
+  } catch (e) {
+    console.error('Save error:', e);
+    sync('error', 'sync failed');
+    toast('Save failed');
+  }
+}
+
+async function del(id) {
+  notes = notes.filter(n => n.id !== id);
+  render();
+  sync('syncing', 'saving');
+
+  try {
+    const { error } = await db
+      .from('notes')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+
+    sync('synced', 'synced');
+    toast('Deleted');
+  } catch (e) {
+    console.error('Delete error:', e);
+    sync('error', 'sync failed');
+    toast('Delete failed');
+  }
+}
+
+const copy = t => navigator.clipboard.writeText(t).then(() => toast('Copied'));
+
+function render() {
+  nl.innerHTML = '';
+  const n = notes.length;
+  nc.textContent = n ? `${n} note${n > 1 ? 's' : ''}` : '';
+  dv.style.display = n ? 'flex' : 'none';
+
+  if (!n) {
+    nl.innerHTML = '<div class="em"><div class="em-i">∅</div><p>no notes yet</p></div>';
+    return;
+  }
+
+  notes.forEach((note, i) => {
+    const el = document.createElement('div');
+    el.className = 'nc2';
+    el.style.animationDelay = `${i * .03}s`;
+    const d = new Date(note.c);
+    const ti = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' · ' + d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    const w = note.t.trim().split(/\s+/).length;
+    el.innerHTML = `<div class="nb"><div class="nt">${esc(note.t)}</div><div class="nm"><span class="nti">${ti}</span><span class="ntg">${w}w</span></div></div><div class="na"><button class="bi" onclick="copy(${JSON.stringify(note.t)})">⎘</button><button class="bi d" onclick="del(${note.id})">×</button></div>`;
+    nl.appendChild(el);
+  });
+}
+
+ni.addEventListener('input', () => { cc.textContent = `${ni.value.length} / 2000`; sb.disabled = !ni.value.trim(); });
+ni.addEventListener('keydown', e => { if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') save(); });
+load();
+</script>
+</body>
+</html>
